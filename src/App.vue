@@ -24,7 +24,12 @@
             <v-list-tile avatar v-for="(image, index) in images" :key="index">
               <v-list-tile-avatar>
                 <img
-                  v-if="image.isFinished"
+                  v-if="image.isError"
+                  src="./assets/times-solid.svg"
+                  style="width:22px;height:22px"
+                >
+                <img
+                  v-else-if="image.isFinished"
                   src="./assets/check-solid.svg"
                   style="width:22px;height:22px"
                 >
@@ -72,7 +77,7 @@ export default {
         });
         files.sort(utils.dynamicSort('name'));
         files.forEach((file) => {
-          this.images.push({ file, isFinished: false });
+          this.images.push({ file, isFinished: false, isError: false });
         });
         this.$refs.topProgress.start();
         this.processNext();
@@ -115,8 +120,12 @@ export default {
           this.processNext();
         })
         .catch((error) => {
-          this.$refs.topProgress.fail();
+          nextElement.isFinished = true;
+          nextElement.isError = true;
+          this.countFinished += 1;
+          this.$refs.topProgress.progress = 100 * (this.countFinished / this.images.length);
           console.log(error);
+          this.processNext();
         });
     },
     generateMei() {
@@ -129,59 +138,63 @@ export default {
       const meiFacsimile = meiXml.find('facsimile').first();
       const meiSection = meiXml.find('section').first();
       let curMeasure = 1;
+      let curPage = 1;
 
-      this.images.forEach((page, p) => {
-        meiFacsimile.append(
-          `<surface xml:id="surface_${ulid()}"
-            n="${p + 1}"
+      this.images.forEach((page) => {
+        if (!page.isError) {
+          meiFacsimile.append(
+            `<surface xml:id="surface_${ulid()}"
+            n="${curPage}"
             ulx="0"
             uly="0"
             lrx="${page.width - 1}"
             lry="${page.height - 1}"
           />`,
-        );
-        const meiSurface = meiFacsimile.find('surface').last();
+          );
+          const meiSurface = meiFacsimile.find('surface').last();
 
-        meiSurface.append(
-          `<graphic xml:id="graphic_${ulid()}"
+          meiSurface.append(
+            `<graphic xml:id="graphic_${ulid()}"
             target="${page.file.name}"
             width="${page.width}"
             height="${page.height}"
           />`,
-        );
+          );
 
-        page.measures.forEach((measure, m) => {
-          const meiZoneId = `zone_${ulid()}`;
-          meiSurface.append(
-            `<zone xml:id="${meiZoneId}"
+          page.measures.forEach((measure, m) => {
+            const meiZoneId = `zone_${ulid()}`;
+            meiSurface.append(
+              `<zone xml:id="${meiZoneId}"
               type="measure"
               ulx="${Math.floor(measure.left)}"
               uly="${Math.floor(measure.top)}"
               lrx="${Math.floor(measure.right)}"
               lry="${Math.floor(measure.bottom)}"
             />`,
-          );
+            );
 
-          meiSection.append(
-            `<measure xml:id="measure_${ulid()}"
+            meiSection.append(
+              `<measure xml:id="measure_${ulid()}"
               n="${curMeasure}"
               label="${curMeasure}"
               facs="#${meiZoneId}"
             />`,
-          );
-          curMeasure += 1;
+            );
+            curMeasure += 1;
 
-          if (
-            page.measures.length > m + 1
-            && page.measures[m + 1].left < measure.left
-          ) {
-            meiSection.append('<sb />');
-          } else if (page.measures.length <= m + 1) {
-            meiSection.append('<sb />');
-          }
-        });
+            if (
+              page.measures.length > m + 1
+              && page.measures[m + 1].left < measure.left
+            ) {
+              meiSection.append('<sb />');
+            } else if (page.measures.length <= m + 1) {
+              meiSection.append('<sb />');
+            }
+          });
 
-        meiSection.append('<pb />');
+          meiSection.append('<pb />');
+          curPage += 1;
+        }
       });
 
       let meiString = new XMLSerializer().serializeToString(meiXml.get(0));
