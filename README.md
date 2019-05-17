@@ -5,7 +5,7 @@ This is a self contained package of the *Deep Optical Measure Detector*. It can 
 ## Requirements
 Make sure to have [Docker](https://www.docker.com/) installed and running properly. That's it.
 
-## How to run
+## How to Run
 1. Build the docker image with the latest model
 
 ```bash
