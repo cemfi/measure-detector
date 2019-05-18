@@ -30,24 +30,9 @@
             >
               <v-list-tile-avatar>
                 <img
-                  v-if="image.status === 'error'"
-                  src="./assets/times.svg"
+                  :src="`${publicPath}icons/${image.status}.svg`"
                   style="width:32px;height:32px"
-                >
-                <img
-                  v-else-if="image.status === 'success'"
-                  src="./assets/check.svg"
-                  style="width:32px;height:32px"
-                >
-                <img
-                  v-else-if="image.status === 'enqueued'"
-                  src="./assets/clock.svg"
-                  style="width:32px;height:32px"
-                >
-                <img
-                  v-else-if="image.status === 'processing'"
-                  src="./assets/cog.svg"
-                  style="width:32px;height:32px;animation:rotation 2s infinite linear"
+                  v-bind:class="{ rotate: image.status === 'processing' }"
                 >
               </v-list-tile-avatar>
               <div class="ellipsize-left">{{image.file.name}}</div>
@@ -83,12 +68,20 @@ export default {
   },
   data() {
     return {
+      publicPath: process.env.BASE_URL,
       version,
       images: [],
       countFinished: 0,
       showViewer: false,
       viewerFilename: null,
     };
+  },
+  mounted() {
+    // Preloading images
+    new Image().src = `${this.publicPath}icons/enqueued.svg`;
+    new Image().src = `${this.publicPath}icons/success.svg`;
+    new Image().src = `${this.publicPath}icons/processing.svg`;
+    new Image().src = `${this.publicPath}icons/error.svg`;
   },
   methods: {
     onFileDrop(event) {
@@ -299,6 +292,10 @@ export default {
   transform: translate(-50%, -50%);
   color: #222831;
   text-align: center;
+}
+
+.rotate {
+  animation: rotation 2s infinite linear;
 }
 
 @keyframes rotation {
