@@ -22,4 +22,6 @@ $ docker run -p 8080:8080 -i -t measure_detector
 3. Go to [http://localhost:8080](http://localhost:8080) and drop some images. Be patient, the detection is computationally pretty heavy.
 
 ## Acknowledgements
-The DNN model was trained by [Alexander Pacha](https://github.com/apacha/), see [this project](https://github.com/OMR-Research/MeasureDetector/). Thank you very much, Alex!
+The DNN model was trained by [Alexander Pacha](https://github.com/apacha/), see [this project](https://github.com/OMR-Research/MeasureDetector/).
+
+Thanks also to [Alexander Leemhuis](https://github.com/AlexL164) for meticulously annotating hundreds of score images for the dataset.
