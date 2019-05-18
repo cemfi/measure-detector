@@ -6,7 +6,7 @@ RUN mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
 
-RUN curl -L https://github.com/OMR-Research/MeasureDetector/releases/download/v1.0/2019-05-16_faster-rcnn-inception-resnet-v2.pb --output model.pb
+RUN curl -L https://github.com/OMR-Research/MeasureDetector/releases/download/v1.0/2019-05-16_faster-rcnn-resnet50.pb --output model.pb
 
 
 ADD backend ./
