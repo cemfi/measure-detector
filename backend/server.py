@@ -20,20 +20,20 @@ sess = tf.Session()
 
 def compare_measure_bounding_boxes(self, other):
     """Compares bounding boxes of two measures and returns which one should come first"""
-    if self['left'] >= other['left'] and self['top'] >= other['top']:
+    if self['ulx'] >= other['ulx'] and self['uly'] >= other['uly']:
         return +1  # self after other
-    elif self['left'] < other['left'] and self['top'] < other['top']:
+    elif self['ulx'] < other['ulx'] and self['uly'] < other['uly']:
         return -1  # other after self
     else:
-        overlap_y = min(self['bottom'] - other['top'], other['bottom'] - self['top']) \
-                    / min(self['bottom'] - self['top'], other['bottom'] - other['top'])
+        overlap_y = min(self['lry'] - other['uly'], other['lry'] - self['uly']) \
+                    / min(self['lry'] - self['uly'], other['lry'] - other['uly'])
         if overlap_y >= 0.5:
-            if self['left'] < other['left']:
+            if self['ulx'] < other['ulx']:
                 return -1
             else:
                 return 1
         else:
-            if self['left'] < other['left']:
+            if self['ulx'] < other['ulx']:
                 return 1
             else:
                 return -1
@@ -94,10 +94,10 @@ def detect_measures(body):
             x2 = x2 * image_width
 
             measures.append({
-                'left': x1,
-                'top': y1,
-                'right': x2,
-                'bottom': y2
+                'ulx': x1,
+                'uly': y1,
+                'lrx': x2,
+                'lry': y2
             })
         else:
             break

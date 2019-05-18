@@ -13,33 +13,54 @@
     </v-toolbar>
 
     <v-content>
-      <v-container style="height:100%; display:grid" @drop.prevent="onFileDrop" @dragover.prevent>
-        <div
-          v-if="images.length == 0"
-          style="margin:auto; color:#222831"
-          class="display-1"
-        >Drop image files here</div>
-        <v-card v-else>
-          <v-list dense>
-            <v-list-tile avatar v-for="(image, index) in images" :key="index">
+      <v-container style="height:100%;" @drop.prevent="onFileDrop" @dragover.prevent>
+        <v-card style="height:100%;">
+          <div v-if="images.length == 0" class="dropZone">
+            <span class="display-1">Drop image files here</span>
+            <p
+              style="margin-top:20px"
+            >(All files will be sorted alphanumerically before processing.)</p>
+          </div>
+          <v-list v-else dense>
+            <v-list-tile
+              avatar
+              v-for="(image, index) in images"
+              :key="index"
+              @click.stop="showImage(index)"
+            >
               <v-list-tile-avatar>
                 <img
-                  v-if="image.isError"
-                  src="./assets/times-solid.svg"
-                  style="width:22px;height:22px"
+                  v-if="image.status === 'error'"
+                  src="./assets/times.svg"
+                  style="width:32px;height:32px"
                 >
                 <img
-                  v-else-if="image.isFinished"
-                  src="./assets/check-solid.svg"
-                  style="width:22px;height:22px"
+                  v-else-if="image.status === 'success'"
+                  src="./assets/check.svg"
+                  style="width:32px;height:32px"
                 >
-                <v-progress-circular v-else indeterminate color="#f96d00"/>
+                <img
+                  v-else-if="image.status === 'enqueued'"
+                  src="./assets/clock.svg"
+                  style="width:32px;height:32px"
+                >
+                <img
+                  v-else-if="image.status === 'processing'"
+                  src="./assets/cog.svg"
+                  style="width:32px;height:32px;animation:rotation 2s infinite linear"
+                >
               </v-list-tile-avatar>
               <div class="ellipsize-left">{{image.file.name}}</div>
             </v-list-tile>
           </v-list>
         </v-card>
       </v-container>
+      <v-dialog v-model="showViewer" max-width="1000">
+        <v-card dark color="#222831" class="pa-3">
+          <canvas ref="canvas" style="max-width:100%" @click="showViewer = false"/>
+          <span class="ellipsize-left" style="font-size:13px">{{ viewerFilename }}</span>
+        </v-card>
+      </v-dialog>
     </v-content>
   </v-app>
 </template>
@@ -64,27 +85,77 @@ export default {
     return {
       version,
       images: [],
-      currentImage: null,
       countFinished: 0,
+      showViewer: false,
+      viewerFilename: null,
     };
   },
   methods: {
     onFileDrop(event) {
-      if (this.images.length === 0) {
-        const files = [];
-        Array.from(event.dataTransfer.files).forEach((file) => {
-          files.push(file);
-        });
-        files.sort(utils.dynamicSort('name'));
-        files.forEach((file) => {
-          this.images.push({ file, isFinished: false, isError: false });
-        });
-        this.$refs.topProgress.start();
-        this.processNext();
-      }
+      this.images = [];
+      this.countFinished = 0;
+
+      const files = [];
+      Array.from(event.dataTransfer.files).forEach((file) => {
+        files.push(file);
+      });
+      files.sort(utils.dynamicSort('name'));
+      files.forEach((file) => {
+        this.images.push({ file, status: 'enqueued' });
+      });
+      this.$refs.topProgress.start();
+      this.processNext();
+    },
+    showImage(index) {
+      const image = this.images[index];
+      const reader = new FileReader();
+
+      this.viewerFilename = image.file.name;
+      this.$refs.canvas.width = 0;
+      this.$refs.canvas.height = 0;
+
+      reader.onload = (event) => {
+        const imageData = new Image();
+        imageData.src = reader.result;
+        imageData.onload = () => {
+          this.$refs.canvas.width = imageData.width;
+          this.$refs.canvas.height = imageData.height;
+          const ctx = this.$refs.canvas.getContext('2d');
+          ctx.drawImage(imageData, 0, 0);
+          if (image.measures !== undefined) {
+            ctx.lineWidth = '3';
+            ctx.strokeStyle = '#f96d00';
+            ctx.fillStyle = '#22283144';
+            image.measures.forEach((measure) => {
+              ctx.beginPath();
+              ctx.rect(
+                measure.ulx,
+                measure.uly,
+                measure.lrx - measure.ulx,
+                measure.lry - measure.uly,
+              );
+              ctx.fill();
+            });
+            image.measures.forEach((measure) => {
+              ctx.beginPath();
+              ctx.rect(
+                measure.ulx,
+                measure.uly,
+                measure.lrx - measure.ulx,
+                measure.lry - measure.uly,
+              );
+              ctx.stroke();
+            });
+          }
+        };
+        this.showViewer = true;
+      };
+      reader.readAsDataURL(image.file);
     },
     processNext() {
-      const nextElement = this.images.find(element => !element.isFinished);
+      const nextElement = this.images.find(
+        element => element.status === 'enqueued',
+      );
 
       // All elements processed
       if (nextElement === undefined) {
@@ -92,6 +163,7 @@ export default {
         return;
       }
 
+      nextElement.status = 'processing';
       const reader = new FileReader();
       reader.onload = (event) => {
         const imageData = new Image();
@@ -114,14 +186,13 @@ export default {
         })
         .then((response) => {
           nextElement.measures = response.data.measures;
-          nextElement.isFinished = true;
+          nextElement.status = 'success';
           this.countFinished += 1;
           this.$refs.topProgress.progress = 100 * (this.countFinished / this.images.length);
           this.processNext();
         })
         .catch((error) => {
-          nextElement.isFinished = true;
-          nextElement.isError = true;
+          nextElement.status = 'error';
           this.countFinished += 1;
           this.$refs.topProgress.progress = 100 * (this.countFinished / this.images.length);
           console.log(error);
@@ -141,7 +212,7 @@ export default {
       let curPage = 1;
 
       this.images.forEach((page) => {
-        if (!page.isError) {
+        if (page.status === 'success') {
           meiFacsimile.append(
             `<surface xml:id="surface_${ulid()}"
             n="${curPage}"
@@ -166,10 +237,10 @@ export default {
             meiSurface.append(
               `<zone xml:id="${meiZoneId}"
               type="measure"
-              ulx="${Math.floor(measure.left)}"
-              uly="${Math.floor(measure.top)}"
-              lrx="${Math.floor(measure.right)}"
-              lry="${Math.floor(measure.bottom)}"
+              ulx="${Math.floor(measure.ulx)}"
+              uly="${Math.floor(measure.uly)}"
+              lrx="${Math.floor(measure.lrx)}"
+              lry="${Math.floor(measure.lry)}"
             />`,
             );
 
@@ -184,7 +255,7 @@ export default {
 
             if (
               page.measures.length > m + 1
-              && page.measures[m + 1].left < measure.left
+              && page.measures[m + 1].ulx < measure.ulx
             ) {
               meiSection.append('<sb />');
             } else if (page.measures.length <= m + 1) {
@@ -219,5 +290,23 @@ export default {
   /* Beginning of string */
   direction: rtl;
   text-align: left;
+}
+
+.dropZone {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #222831;
+  text-align: center;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }
 </style>
