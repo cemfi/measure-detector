@@ -1,3 +1,5 @@
+<img align="right" width="40%" src="/preview.png">
+
 # Deep Optical Measure Detector
 
 This is a self contained package of the *Deep Optical Measure Detector*. It can be utilized to generate measure annotations in the MEI format for handwritten and typeset score images.
