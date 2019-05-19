@@ -171,9 +171,9 @@ export default {
       const formData = new FormData();
       formData.append('image', nextElement.file);
       axios
-        .post('http://localhost:8080/upload', formData, {
+        .post('http://localhost:8000/upload', formData, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
+            // 'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data',
           },
         })

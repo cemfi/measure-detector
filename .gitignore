@@ -1,5 +1,6 @@
 .DS_Store
 node_modules
+__pycache__
 # /dist
 
 # local env files
@@ -19,3 +20,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Project specific files
+backend/model.pb

@@ -12,7 +12,7 @@ RUN curl -L https://github.com/OMR-Research/MeasureDetector/releases/download/v1
 ADD backend ./
 ADD dist ./
 
-EXPOSE 8080
+EXPOSE 8000
 
 # ENTRYPOINT ["/bin/bash", "startup.sh"]
-CMD ["hug", "-p=8080", "-f=server.py"]
+CMD ["hug", "-p=8000", "-f=server.py"]

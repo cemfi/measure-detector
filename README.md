@@ -16,10 +16,10 @@ $ docker build -t measure_detector .
 
 2. Run in container
 ```bash
-$ docker run -p 8080:8080 -i -t measure_detector
+$ docker run -p 8000:8000 -i -t measure_detector
 ```
 
-3. Go to [http://localhost:8080](http://localhost:8080) and drop some images. Be patient, the detection is computationally pretty heavy.
+3. Go to [http://localhost:8000](http://localhost:8000) and drop some images. Be patient, the detection is computationally pretty heavy.
 
 ## Acknowledgements
 The DNN model was trained by [Alexander Pacha](https://github.com/apacha/), see [this project](https://github.com/OMR-Research/MeasureDetector/).

@@ -74,7 +74,7 @@ def user_interface():
 
 
 @hug.post('/upload')
-def detect_measures(body):
+def detect_measures(body, cors: hug.directives.cors="*"):
     """Takes an image file and returns measure bounding boxes as JSON"""
 
     image = Image.open(io.BytesIO(body['image'])).convert("RGB")
