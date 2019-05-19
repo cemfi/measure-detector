@@ -25,8 +25,8 @@ function getTemplate(date, version) {
             <encodingDesc>
                 <appInfo>
                     <application isodate="${date}" version="${version}">
-                        <name>Deep Optical Measure Recognition</name>
-                        <p>Measures detected with Deep Optical Measure Recognition</p>
+                        <name>Deep Optical Measure Detector</name>
+                        <p>Measures detected with Deep Optical Measure Detector</p>
                     </application>
                 </appInfo>
             </encodingDesc>
