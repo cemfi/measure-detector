@@ -76,13 +76,6 @@ export default {
       viewerFilename: null,
     };
   },
-  mounted() {
-    // Preloading images
-    new Image().src = `${this.publicPath}icons/enqueued.svg`;
-    new Image().src = `${this.publicPath}icons/success.svg`;
-    new Image().src = `${this.publicPath}icons/processing.svg`;
-    new Image().src = `${this.publicPath}icons/error.svg`;
-  },
   methods: {
     onFileDrop(event) {
       this.images = [];

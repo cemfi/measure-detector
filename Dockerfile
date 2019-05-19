@@ -1,7 +1,7 @@
 FROM tensorflow/tensorflow:1.13.1-py3
 
 RUN apt-get update && apt-get install -y curl
-RUN pip3 install pillow hug
+RUN pip3 install pillow hug gunicorn
 RUN mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
@@ -15,4 +15,4 @@ ADD dist ./
 EXPOSE 8000
 
 # ENTRYPOINT ["/bin/bash", "startup.sh"]
-CMD ["hug", "-p=8000", "-f=server.py"]
+CMD ["gunicorn", "--bind=0.0.0.0:8000", "--timeout=180", "--workers=2", "server:__hug_wsgi__"]
