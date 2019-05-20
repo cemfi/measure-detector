@@ -61,6 +61,8 @@ import vkbeautify from 'vkbeautify';
 import { version } from '../package.json';
 import utils from './utils';
 
+axios.defaults.timeout = 180000; // 3 min timeout
+
 export default {
   name: 'App',
   components: {
