@@ -5,7 +5,7 @@
 This is a self contained package of the *Deep Optical Measure Detector*. It can be utilized to generate measure annotations in the MEI format for handwritten and typeset score images.
 
 ## How to Run
-1. Make sure to have [Docker](https://www.docker.com/) installed and running properly with at least 4 GB of RAM dedicated to Docker.
+1. Make sure to have [Docker](https://www.docker.com/) installed and running properly with at least 4 GB of RAM assigned to Docker.
 
 2. Run in container
 ```bash
