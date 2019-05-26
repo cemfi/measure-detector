@@ -18,6 +18,11 @@ with tf.gfile.GFile('model.pb', 'rb') as fid:
 sess = tf.Session()
 
 
+@hug.response_middleware()
+def process_data(request, response, resource):
+    response.set_header('Access-Control-Allow-Origin', '*')
+
+
 def compare_measure_bounding_boxes(self, other):
     """Compares bounding boxes of two measures and returns which one should come first"""
     if self['ulx'] >= other['ulx'] and self['uly'] >= other['uly']:
