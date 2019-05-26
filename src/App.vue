@@ -2,9 +2,9 @@
   <v-app style="height: 100%">
     <vue-topprogress ref="topProgress" color="#f96d00" :trickle="false"/>
     <v-toolbar app dark color="#222831">
-      <v-toolbar-title class="headline text-uppercase">
+      <v-toolbar-title class="headline">
         <a href="http://www.cemfi.de/" target="_blank" style="text-decoration: none;">
-          <span style="color:#f96d00">CEMFI.</span>
+          <span style="color:#f96d00">cemfi.</span>
         </a>
         <span class="font-weight-thin">Deep Optical Measure Detector</span>
       </v-toolbar-title>
