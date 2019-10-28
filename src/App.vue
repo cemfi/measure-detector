@@ -246,8 +246,6 @@ export default {
               && page.measures[m + 1].ulx < measure.ulx
             ) {
               meiSection.append('<sb />');
-            } else if (page.measures.length <= m + 1) {
-              meiSection.append('<sb />');
             }
           });
 
