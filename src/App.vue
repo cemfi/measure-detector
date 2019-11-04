@@ -246,7 +246,7 @@ export default {
             }
           });
 
-          meiSection.append(`<pb n="${p + 1}"/>);
+          meiSection.append(`<pb n="${p + 1}"/>`);
         }
       });
 
