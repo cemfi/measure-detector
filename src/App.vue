@@ -166,7 +166,7 @@ export default {
       const formData = new FormData();
       formData.append('image', nextElement.file);
       axios
-        .post('http://localhost:8000/upload', formData, {
+        .post('/upload', formData, {
           headers: {
             // 'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data',
@@ -196,14 +196,12 @@ export default {
 
       const meiFacsimile = meiXml.find('facsimile').first();
       const meiSection = meiXml.find('section').first();
-      let curMeasure = 1;
-      let curPage = 1;
 
-      this.images.forEach((page) => {
+      this.images.forEach((page, p) => {
         if (page.status === 'success') {
           meiFacsimile.append(
             `<surface xml:id="surface_${ulid()}"
-            n="${curPage}"
+            n="${p + 1}"
             ulx="0"
             uly="0"
             lrx="${page.width - 1}"
@@ -234,12 +232,11 @@ export default {
 
             meiSection.append(
               `<measure xml:id="measure_${ulid()}"
-              n="${curMeasure}"
-              label="${curMeasure}"
+              n="${m + 1}"
+              label="${m + 1}"
               facs="#${meiZoneId}"
             />`,
             );
-            curMeasure += 1;
 
             if (
               page.measures.length > m + 1
@@ -249,8 +246,7 @@ export default {
             }
           });
 
-          meiSection.append('<pb />');
-          curPage += 1;
+          meiSection.append(`<pb n="${p + 1}"/>);
         }
       });
 
