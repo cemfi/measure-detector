@@ -22,3 +22,4 @@ yarn-error.log*
 
 # Project specific files
 backend/model.pb
+dist

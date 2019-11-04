@@ -1,13 +1,19 @@
 {
   "name": "measure-detector",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "author": {
     "name": "Simon Waloschek",
     "email": "s.waloschek@cemfi.de"
   },
-  "contributors":[
-    {"name": "Alexander Pacha",
-    "email": "alexander.pacha@tuwien.ac.at"}
+  "contributors": [
+    {
+      "name": "Alexander Pacha",
+      "email": "alexander.pacha@tuwien.ac.at"
+    },
+    {
+      "name": "Daniel Röwenstrunk",
+      "email": "roewenstrunk@uni-paderborn.de"
+    }
   ],
   "private": true,
   "scripts": {
