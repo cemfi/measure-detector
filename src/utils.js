@@ -39,7 +39,7 @@ function getTemplate(date, version) {
                 <score>
                   <scoreDef/>
                   <section>
-                    <pb/>
+                    <pb n="1"/>
                   </section>
                 </score>
               </mdiv>

@@ -246,15 +246,15 @@ export default {
             }
           });
 
-          meiSection.append(`<pb n="${p + 1}"/>`);
+          meiSection.append(`<pb n="${p + 2}"/>`);
         }
       });
 
       let meiString = new XMLSerializer().serializeToString(meiXml.get(0));
       meiString = vkbeautify.xml(meiString.replace(/ xmlns=""/g, ''));
       saveAs(
-        new Blob([meiString], { type: 'text/plain;charset=utf-8' }),
-        'measure_annotations.mei',
+        new Blob([meiString], { type: 'text/xml;charset=utf-8' }),
+        'measure_annotations.xml',
       );
     },
   },
