@@ -215,8 +215,8 @@ export default {
           meiSurface.append(
             `<graphic xml:id="graphic_${ulid()}"
             target="${page.file.name}"
-            width="${page.width}"
-            height="${page.height}"
+            width="${page.width}px"
+            height="${page.height}px"
           />`,
           );
 
