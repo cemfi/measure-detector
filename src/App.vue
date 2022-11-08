@@ -198,9 +198,11 @@ export default {
       const meiSection = meiXml.find('section').first();
 
       this.images.forEach((page, p) => {
+        const meiSurfaceId = `surface_${ulid()}`;
+
         if (page.status === 'success') {
           meiFacsimile.append(
-            `<surface xml:id="surface_${ulid()}"
+            `<surface xml:id="${meiSurfaceId}"
             n="${p + 1}"
             ulx="0"
             uly="0"
@@ -246,7 +248,7 @@ export default {
             }
           });
 
-          meiSection.append(`<pb n="${p + 2}"/>`);
+          meiSection.append(`<pb xml:id="pb_${ulid()}" n="${p + 2}" facs="#${meiSurfaceId}"/>`);
         }
       });
 
